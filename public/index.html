@@ -1,0 +1,268 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1">
+<title>Pace</title>
+<meta name="description" content="One number a day.">
+<meta name="theme-color" content="#FFF8E7">
+<meta name="color-scheme" content="light">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Pace">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="icon" href="/icon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="/styles.css?v=12">
+</head>
+<body>
+
+<!-- ───────── sign in ───────── -->
+<div id="gate" class="gate" hidden>
+  <div class="gate-inner">
+    <div class="mark" aria-hidden="true">
+      <svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="34" class="mark-track"/><circle cx="50" cy="50" r="34" class="mark-arc"/><circle cx="50" cy="50" r="8" class="mark-dot"/></svg>
+    </div>
+    <h1>Pace</h1>
+    <p class="gate-line">One number a day.</p>
+    <button id="signInBtn" class="btn btn-primary">Sign in with Google</button>
+    <p id="gateMsg" class="gate-msg" role="status"></p>
+  </div>
+</div>
+
+<div id="boot" class="boot"><div class="boot-dot"></div></div>
+
+<!-- ───────── app ───────── -->
+<div id="app" class="app" hidden>
+
+  <header class="top">
+    <div class="top-brand">
+      <span class="top-mark" aria-hidden="true"></span>
+      <span>Pace</span>
+    </div>
+    <button class="icon-btn" id="settingsBtn" aria-label="Settings">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="5" cy="12" r="1.4"/><circle cx="12" cy="12" r="1.4"/><circle cx="19" cy="12" r="1.4"/></svg>
+    </button>
+  </header>
+
+  <main id="main">
+
+    <!-- ============ TODAY ============ -->
+    <section class="deck" data-deck="today">
+
+      <div class="hero">
+        <p class="eyebrow" id="todayDate">Today</p>
+        <button class="bignum" id="bigNumber" aria-label="Today's target. Tap to break it down.">
+          <span id="bigNumberVal">—</span>
+        </button>
+        <p class="hero-sub" id="heroSub">to keep today</p>
+        <p class="hero-hours" id="heroHours"></p>
+
+        <div class="pacebar" role="img" aria-label="Progress toward today's target">
+          <div class="pacebar-fill" id="paceFill"></div>
+        </div>
+        <p class="hero-kept" id="heroKept"></p>
+
+        <p class="tap-hint" id="tapHint">tap the number to break it down</p>
+      </div>
+
+      <div class="quick">
+        <button class="quick-btn" data-add="shift">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg>
+          <span>Log shift</span>
+        </button>
+        <button class="quick-btn" data-add="expense">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 8.5h17v11h-17z"/><path d="M3.5 8.5 6 4.5h12l2.5 4"/><path d="M9.5 12.5h5"/></svg>
+          <span>Spent</span>
+        </button>
+        <button class="quick-btn" data-add="income">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5"/><path d="m6 11 6-6 6 6"/></svg>
+          <span>Got paid</span>
+        </button>
+      </div>
+
+      <div class="rest-row"><button class="rest-toggle" id="restBtn">Not working today</button></div>
+
+      <div class="binding" id="bindingCard" hidden>
+        <span class="binding-dot"></span>
+        <div>
+          <p class="binding-name" id="bindingName"></p>
+          <p class="binding-meta" id="bindingMeta"></p>
+        </div>
+      </div>
+
+      <div class="notice" id="capNotice" hidden></div>
+
+      <p class="quote" id="quote"></p>
+
+
+      <section class="panel" id="todayPanel" hidden>
+        <h2>Today so far</h2>
+        <div id="todayList" class="rows"></div>
+      </section>
+
+      <section class="panel">
+        <h2>This week</h2>
+        <div class="week" id="weekStrip"></div>
+        <p class="panel-foot" id="weekFoot"></p>
+      </section>
+
+    </section>
+
+    <!-- ============ GOALS ============ -->
+    <section class="deck" data-deck="goals" hidden>
+      <div class="deck-head">
+        <h1>Goals</h1>
+        <button class="btn btn-small" id="addGoalBtn">Add</button>
+      </div>
+      <section class="ladder" id="ladderPanel" hidden></section>
+      <p class="deck-note" id="goalsNote"></p>
+      <div id="goalsList" class="goals"></div>
+      <section class="panel" id="surplusPanel" hidden>
+        <h2>Beyond your goals</h2>
+        <p class="big-ish" id="surplusVal"></p>
+        <p class="panel-foot">Money saved past everything you've committed to.</p>
+      </section>
+    </section>
+
+    <!-- ============ LOG ============ -->
+    <section class="deck" data-deck="log" hidden>
+      <div class="deck-head">
+        <h1>Log</h1>
+        <div class="month-nav">
+          <button class="icon-btn sm" id="monthPrev" aria-label="Previous month">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m14 6-6 6 6 6"/></svg>
+          </button>
+          <span id="monthLabel"></span>
+          <button class="icon-btn sm" id="monthNext" aria-label="Next month">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m10 6 6 6-6 6"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="stat3">
+        <div class="stat"><p class="stat-k">Earned</p><p class="stat-v pos" id="mEarned">—</p></div>
+        <div class="stat"><p class="stat-k">Spent</p><p class="stat-v" id="mSpent">—</p></div>
+        <div class="stat"><p class="stat-k">Kept</p><p class="stat-v" id="mKept">—</p></div>
+      </div>
+      <p class="panel-foot pad" id="mHours"></p>
+
+      <section class="panel">
+        <h2>Where it went</h2>
+        <div id="catBars" class="catbars"></div>
+      </section>
+
+      <div class="chips" id="logFilter">
+        <button class="chip on" data-filter="all">All</button>
+        <button class="chip" data-filter="shift">Shifts</button>
+        <button class="chip" data-filter="income">Income</button>
+        <button class="chip" data-filter="expense">Spending</button>
+      </div>
+
+      <div id="logList" class="rows"></div>
+
+      <button class="btn btn-ghost wide" id="exportBtn">Export this month to Excel</button>
+    </section>
+
+    <!-- ============ PLAN ============ -->
+    <section class="deck" data-deck="plan" hidden>
+      <div class="deck-head"><h1>Plan</h1></div>
+
+      <section class="panel accent">
+        <h2>Thinking of buying something?</h2>
+        <p class="panel-lead">It'll tell you the cost in hours, not dollars.</p>
+        <div class="sim-row">
+          <div class="field money">
+            <span class="cur">$</span>
+            <input id="simAmount" type="number" inputmode="decimal" step="0.01" min="0" placeholder="0.00">
+          </div>
+          <button class="btn btn-primary" id="simBtn">Check</button>
+        </div>
+        <input id="simLabel" type="text" placeholder="What is it? (optional)" class="input">
+        <div id="simOut" class="sim-out" hidden></div>
+      </section>
+
+      <section class="panel" id="shortPanel">
+        <h2>If money's tight</h2>
+        <div id="shortBox"></div>
+      </section>
+
+      <section class="panel">
+        <h2>Your ceiling</h2>
+        <div id="capBox" class="capbox"></div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-head">
+          <h2>Bills that repeat</h2>
+          <button class="btn btn-small" id="addRecBtn">Add</button>
+        </div>
+        <div id="recList" class="rows"></div>
+        <p class="panel-foot">Weekly, fortnightly or monthly — each one posts itself as a spend when it lands.</p>
+      </section>
+
+      <section class="panel">
+        <h2>Reminders</h2>
+        <p class="panel-lead">iPhone can't reliably push from a web app. The way that actually works:</p>
+        <ol class="steps">
+          <li>Open <b>Shortcuts</b> → <b>Automation</b> → <b>+</b></li>
+          <li>Pick <b>Time of Day</b>, set your time, <b>Daily</b></li>
+          <li>Choose <b>Run Immediately</b>, turn <b>Notify When Run</b> on</li>
+          <li>Add action <b>Open App</b> → <b>Pace</b></li>
+        </ol>
+        <p class="panel-foot">Add Pace to your Home Screen first: Share → Add to Home Screen.</p>
+      </section>
+    </section>
+
+  </main>
+
+  <nav class="tabs" id="tabs">
+    <button class="tab on" data-tab="today">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg>
+      <span>Today</span>
+    </button>
+    <button class="tab" data-tab="goals">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4"/><circle cx="12" cy="12" r="0.6" fill="currentColor"/></svg>
+      <span>Goals</span>
+    </button>
+    <button class="tab" data-tab="log">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4.5h14v15H5z"/><path d="M8.5 9h7M8.5 12.5h7M8.5 16h4"/></svg>
+      <span>Log</span>
+    </button>
+    <button class="tab" data-tab="plan">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 16.5 9 11l3.5 3.5L20 7"/><path d="M15.5 7H20v4.5"/></svg>
+      <span>Plan</span>
+    </button>
+  </nav>
+</div>
+
+<!-- ───────── breathe overlay ───────── -->
+<div id="breathe" class="breathe" hidden>
+  <button class="breathe-close" id="breatheClose" aria-label="Close">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+  </button>
+  <div class="breathe-inner" id="breatheInner"></div>
+</div>
+
+<!-- ───────── sheets ───────── -->
+<div id="scrim" class="scrim" hidden></div>
+
+<div class="sheet" id="sheet" hidden>
+  <div class="sheet-grip"></div>
+  <div class="sheet-head">
+    <h2 id="sheetTitle">—</h2>
+    <button class="icon-btn" id="sheetClose" aria-label="Close">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+    </button>
+  </div>
+  <div class="sheet-body" id="sheetBody"></div>
+</div>
+
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+<script type="module" src="/app.js?v=12"></script>
+</body>
+</html>
